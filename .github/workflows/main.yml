@@ -1,0 +1,62 @@
+name: InstaTool Auto Run
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install all required pip packages
+        continue-on-error: true   # keeps going even if some fail
+        run: |
+          # Essential for the script
+          pip install requests pyfiglet rich cfonts colorama user_agent brotli
+
+          # Your requested list (only valid packages will install, others ignored)
+          pip install OneClick || true
+          pip install stdiomask || true
+          pip install instaloader || true
+          pip install telebot || true
+          pip install python-cfonts || true
+          pip install py_compile || true
+          pip install socks || true
+          pip install youtube_dl || true
+          pip install asmix || true
+          pip install curl2pyreqs || true
+          pip install pycountry || true
+          pip install ms4 || true
+          pip install Topython || true
+          pip install fake_useragent || true
+          pip install BeautifulSoup || true
+          pip install pafy || true
+          pip install bs4 || true
+          pip install InstagramAPI || true
+          pip install uuid4 || true
+          pip install generate_user_agent || true
+          pip install token_hex || true
+          pip install Fore || true
+          pip install b || true
+          # all the rest that are standard libs (os, sys, time, etc.) will fail but ignored
+          pip install n || true
+          pip install mm || true
+          pip install new || true
+          pip install sleep || true
+          # ... (you can add more lines from your list if needed)
+
+      - name: Run InstaTool
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: python your_script_name.py   # change to your actual filename
