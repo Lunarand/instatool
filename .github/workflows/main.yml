@@ -3,7 +3,7 @@ name: InstaTool Auto Run
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 */6 * * *'   # runs every 6 hours
+    - cron: '0 */6 * * *'
 
 jobs:
   run-script:
@@ -17,33 +17,27 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'   # changed from 3.11 to fix MutableMapping error
+          python-version: '3.13'
 
-      # Step 1: Install essential packages
       - name: Install essential dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install --upgrade pip
-          pip install --upgrade requests
           pip install requests names user_agent mechanize pyfiglet
           pip install pyfiglet rich cfonts colorama user_agent brotli telebot instaloader stdiomask fake_useragent
 
-      # Step 2: Install EVERY pip command from your script, ignore errors
-      - name: Install all requested pips (from your script)
+      - name: Install all requested pips
         continue-on-error: true
         run: |
           pip install OneClick || true
           pip install stdiomask || true
           pip install user_agent || true
           pip install instaloader || true
-          pip install requests || true
           pip install rich || true
           pip install telebot || true
           pip install python-cfonts || true
           pip install pyfiglet || true
           pip install socks || true
           pip install youtube_dl || true
-          pip install BeautifulSoup || true
           pip install pafy || true
           pip install bs4 || true
           pip install InstagramAPI || true
@@ -58,12 +52,15 @@ jobs:
           pip install mechanize || true
           pip install names || true
           pip install brotli || true
-          pip install * || true
-          # (Duplicate ones will just say "already satisfied", no harm)
 
-      # Step 3: Run the actual script
+      # IMPORTANT FIX
+      - name: Repair broken requests package
+        run: |
+          pip uninstall -y requests || true
+          pip install --no-cache-dir requests==2.32.3
+
       - name: Run InstaTool
         env:
           TOKEN: ${{ secrets.TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
-        run: python instatool.py   # make sure the script is named instatool.py in repo root
+        run: python instatool.py
